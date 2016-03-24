@@ -194,6 +194,7 @@ class datadog_agent(
   } else {
     $agent_conf_content = template('datadog_agent/datadog.conf.erb')
   }
+
   file { '/etc/dd-agent/datadog.conf':
     ensure  => file,
     content => $agent_conf_content,
@@ -202,6 +203,14 @@ class datadog_agent(
     mode    => '0640',
     notify  => Service[$datadog_agent::params::service_name],
     require => File['/etc/dd-agent'],
+  }
+
+  #system_core config
+
+  file { '/etc/dd-agent/conf.d/system_core.yaml':
+      source => "file:///etc/dd-agent/conf.d/system_core.yaml.example",
+      ensure => file,
+      mode   => '0640',
   }
 
   if $puppet_run_reports {
